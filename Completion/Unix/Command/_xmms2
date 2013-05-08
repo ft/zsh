@@ -1,211 +1,217 @@
 #compdef xmms2
 
-_xmms2_command() {
-    local xmms2_cmds
+# Sub-command completion functions
 
-    xmms2_cmds=(
-	add:"adds a URL to the playlist"
-	addarg:"adds one URL with arguments to the playlist"
-	addid:"adds a Medialib id to the playlist"
-	insert:"inserts one URL at a specific position"
-	insertid:"inserts one Medialib id at a specific position"
-	radd:"adds a directory recursively to the playlist"
-	clear:"clears the playlist"
-	shuffle:"shuffles the playlist"
-	sort:"sort the playlist; use a space delimiter for multiple properties"
-	remove:"removes something from the playlist"
-	list:"lists the playlist"
-	addpls:"Adds the contents of a playlist file to the playlist"
-	play:"starts playback"
-	stop:"stops playback"
-	toggleplay:"toggles playback status between play/pause"
-	pause:"pause playback"
-	next:"play next song"
-	prev:"play previous song"
-	seek:"seek to a specific place in current song"
-	jump:"take a leap in the playlist"
-	move:"move a entry in the playlist"
-	volume:"set volume for a channel"
-	volume_list:"list volume levels for each channel"
-	mlib:"medialib manipulation - type 'xmms2 mlib' for more extensive help"
-	playlist:"playlist manipulation - type 'xmms2 playlist' for more extensive help"
-	coll:"collection manipulation - type 'xmms2 coll' for more extensive help"
-	browse:"browse server file lists"
-	status:"go into status mode"
-	info:"information about current entry"
-	current:"formatted information about the current entry"
-	config:"set a config value"
-	config_list:"list all config values"
-	plugin_list:"list all plugins loaded in the server"
-	stats:"get statistics from server"
-	quit:"make the server quit"
-	help:"print help about a command"
-	)
-
-    if (( CURRENT == 1 )); then
-	_describe -t command "xmms2 commands" xmms2_cmds
-    else
-	local curcontext="$curcontext"
-    fi
-
-    local cmd=$words[1]
-
-    local curcontext="${curcontext%:*}:xmms2-${cmd}"
-    _call_function ret _xmms2_$cmd
+_xmms2-add () {
+    __xmms2_completion_niy $0
 }
 
- _xmms2_jump() {
-     songlist=(${"$(xmms2 list)"})
-     playlistitems=()
-     for song ($songlist); do 
-	 if [[ $song = (#b)'  '\[(<->)/(<->)\]' '(*)' '\((*)\) ]]; then
-		    playlistitems+=("$match[1][$match[3]]")
-	 fi
-     done
-     
-     _values -s ' ' 'playlist items' ${(On)playlistitems}
-
+_xmms2-current () {
+    __xmms2_completion_niy $0
 }
 
-_xmms2_mlib() {
-    local mlib_cmds
-    mlib_cmds=(
-	add:"Add 'url' to medialib"
-	loadall:"Load everything from the mlib to the playlist"
-	searchadd:"Search for, and add songs to playlist"
-	search:"Search for songs matching criteria"
-	addpath:"Import metadata from all media files under 'path'"
-	rehash:"Force the medialib to check whether its data is up to date"
-	remove:"Remove an entry from medialib"
-	setstr:"Set a string property together with a medialib entry."
-	setint:"Set a int property together with a medialib entry."
-	rmprop:"Remove a property from a medialib entry"
-	addcover:"Add a cover image on id(s)."
+_xmms2-exit () {
+    _nothing
+}
 
-	)
+_xmms2-help () {
     if (( CURRENT == 2 )); then
-	_describe -t command "xmms2 mlib commands" mlib_cmds
-    else
-	local curcontext="$curcontext"
+        __xmms2_commands
+    elif ((CURRENT == 3 )) &&
+         [[ "${words[2]}" == (collection|playlist|server) ]]
+    then
+        __xmms2_"${words[2]}"_subcommands
     fi
-
-    local cmd=$words[2]
-
-    local curcontext="${curcontext%:*}:xmms2-${cmd}"
-    _call_function ret _xmms2_$cmd
-
 }
 
+_xmms2-info () {
+    __xmms2_completion_niy $0
+}
 
-_xmms2_playlist() {
-    local playlist_cmds
-    playlist_cmds=(
-	list:"List all available playlists"
-	create:"Create a playlist"
-	type:"Set the type of the playlist (list, queue, pshuffle)"
-	load:"Load 'playlistname' stored in medialib"
-	remove:"Remove a playlist"
-	)
+_xmms2-jump () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-list () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-move () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-next () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-pause () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-play () {
+    _nothing
+}
+
+_xmms2-prev () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-remove () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-stop () {
+    _nothing
+}
+
+_xmms2-search () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-seek () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-toggle () {
+    __xmms2_completion_niy $0
+}
+
+_xmms2-collection () {
     if (( CURRENT == 2 )); then
-	_describe -t command "xmms2 playlist commands" playlist_cmds
-    else
-	local curcontext="$curcontext"
+        __xmms2_collection_subcommands
     fi
-
-    local cmd=$words[2]
-
-    local curcontext="${curcontext%:*}:xmms2-${cmd}"
-    _call_function ret _xmms2_playlist_$cmd
 }
 
-_xmms2_playlist_load() {
-    local list
-    list=($(xmms2 playlist list))
-    _describe -t command "xmms2 playlists" list
-}
-
-
-_xmms2_playlist_remove() {
-    local list
-    list=($(xmms2 playlist list))
-    _describe -t command "xmms2 playlists" list
-}
-
-
-_xmms2_coll() {
-    local coll_cmds
-    coll_cmds=(
-	save:"Save a pattern as a collection"
-	rename:"Rename a collection"
-	list:"List all collections in a given namespace"
-	query:"Display all the media in a collection"
-	queryadd:"Add all media in a collection to active playlist"
-	find:"Find all collections that contain the given media"
-	get:"Display the structure of a collection"
-	remove:"Remove a saved collection"
-	attr:"Get/set an attribute for a saved collection"
-	)
+_xmms2-playlist () {
     if (( CURRENT == 2 )); then
-	_describe -t command "xmms2 collection commands" coll_cmds
-    else
-	local curcontext="$curcontext"
+        __xmms2_playlist_subcommands
     fi
-
-    local cmd=$words[2]
-
-    local curcontext="${curcontext%:*}:xmms2-${cmd}"
-    _call_function ret _xmms2_coll_$cmd
 }
 
-_xmms2_coll_helper() {
-    local list
-    list=($(xmms2 coll list))
-    _describe -t command "xmms2 playlists" list
+_xmms2-server () {
+    if (( CURRENT == 2 )); then
+        __xmms2_server_subcommands
+    fi
 }
 
-_xmms2_coll_rename() {
-    _xmms2_coll_helper
+# Helper functions follow
+
+__xmms2_completion_niy () {
+    _message "Subcommand completion for \`${1#_xmms2-}' not implemented yet"
 }
 
-_xmms2_coll_remove() {
-    _xmms2_coll_helper
+__xmms2_commands () {
+    local -a _xmms2_commands
+
+    _xmms2_commands=(
+        'add:Add the matching media or files to a playlist'
+        'current:Display current playback status, either continuously or once'
+        'exit:Exit the shell-like interface'
+        'help:List commands or provide detailed help about a command'
+        'info:Display all the properties for all media matching the pattern'
+        'jump:Jump to the first media matching the pattern'
+        'list:List the contents of a playlist (the active playlist by default)'
+        'move:Move entries inside a playlist'
+        'next:Jump to next song'
+        'pause:Pause playback'
+        'play:Start playback'
+        'prev:Jump to previous song'
+        'remove:Remove the matching media from a playlist'
+        'stop:Stop playback'
+        'search:Search and print all media matching the pattern'
+        'seek:Seek to a relative or absolute position'
+        'toggle:Toggle playback'
+        'collection:Manipulate server-side collections'
+        'playlist:Manipulate server-side playlists'
+        'server:Manipulate server-specific settings'
+    )
+    _describe -t subcommands 'xmms2 commands' _xmms2_commands
 }
 
-_xmms2_coll_get() {
-    _xmms2_coll_helper
+__xmms2_collection_subcommands () {
+    local -a _xmms2_collection_subommands
+
+    _xmms2_collection_subommands=(
+        'config:Get or set attributes for the given collection'
+        'create:Create a new collection'
+        'list:List all collections'
+        'remove:Remove a collection'
+        'rename:Rename a collection'
+        'show:Display a human-readable description of a collection'
+    )
+    _describe -t subcommands 'xmms2 collection subcommands' \
+        _xmms2_collection_subommands
 }
 
-_xmms2_coll_query() {
-    _xmms2_coll_helper
+__xmms2_playlist_subcommands () {
+    local -a _xmms2_playlist_subommands
+
+    _xmms2_playlist_subommands=(
+        'clear:Clear a playlist'
+        'config:Configure a playlist by changing its type, attributes, etc'
+        'create:Create a new playlist'
+        'list:List all playlists'
+        'remove:Remove the given playlist'
+        'rename:Rename a playlist'
+        'shuffle:Shuffle a playlist'
+        'sort:Sort a playlist by a list of properties'
+        'switch:Change the active playlist'
+    )
+    _describe -t subcommands 'xmms2 playlist subcommands' \
+        _xmms2_playlist_subommands
 }
 
-_xmms2_coll_queryadd() {
-    _xmms2_coll_helper
+__xmms2_server_subcommands () {
+    local -a _xmms2_server_subommands
+
+    _xmms2_server_subommands=(
+        'browse:Browse a resource location'
+        'config:Get or set configuration values'
+        'import:Import new files into the media library'
+        'plugins:List the plugins loaded in the server'
+        'property:Get or set properties for a given media'
+        'rehash:Rehash the media matched by the pattern or the while library'
+        'remove:Remove the matching media from the media library'
+        'shutdown:Shutdown the server'
+        'stats:Display statistics about the server'
+        'sync:Force the saving of collections to the disk'
+        'volume:Get or set the audio volume (in a range of 0-100)'
+    )
+    _describe -t subcommands 'xmms2 server subcommands' \
+        _xmms2_server_subommands
 }
 
-_xmms2_coll_attr() {
-    _xmms2_coll_helper
-}
+# Main XMMS2 completion
 
-_xmms2_add() {
-  _files
-}
+_xmms2 () {
+    local curcontext="${curcontext}"
+    local state ret xmms2cmd
+    local -a args
 
-_xmms2_radd() {
-  _dirs
-}
+    args=(
+        '(--help -h)'{--help,-h}'[display help information]:'
+        '(--version -v)'{--version,-v}'[display version information]:'
+        '*:: :->subcommand_or_options'
+    )
+    _arguments -C ${args} && return
 
-_xmms2_addpls() {
-  local expl
-  _description files expl 'playlist'
-  _files "$expl[@]" -g '*.([mM]3[uU]|[pP][lL][sS])(-.)'
-}
-
-_xmms2() {
-_arguments \
-    '--format[specify the format of song display]:format string' \
-    '--no-status[prevent printing song status on completion]' \
-    '*::xmms2 command:_xmms2_command'
+    if [[ $state == subcommand_or_options ]]; then
+        if (( CURRENT == 1 )); then
+            __xmms2_commands
+        else
+            if (( ${+commands[xmms2]} == 0 )); then
+                _message '`xmms2'\'' not found in $path; sub-cmd completions disabled.'
+                return 0
+            fi
+            xmms2cmd="${words[1]}"
+            if ! (( ${+functions[_xmms2-$xmms2cmd]} )); then
+                _message "Subcommand $xmms2cmd not known"
+                return 0
+            fi
+            curcontext="${curcontext%:*:*}:xmms2-${xmms2cmd}:"
+            _call_function ret _xmms2-${xmms2cmd}
+        fi
+    fi
 }
 
 _xmms2 "$@"
